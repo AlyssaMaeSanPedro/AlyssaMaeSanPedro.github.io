@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Customer Support Operations Dashboard &amp; Analysis</title>
+<script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme:dark)").matches?"navy":"light")})()</script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap");
+:root{--serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;--side:292px}
+:root,:root[data-theme="light"]{--bg:#f5f1e6;--surface:#fbf8f0;--ink:#0f1e33;--muted:#55657a;--line:#ddd6c6;--accent:#1c3f6e;--accent-ink:#fff;--soft:rgba(28,63,110,.09);--code:#f1ecde;--head:#ece6d8;--shadow:rgba(20,30,50,.10);
+ --s-com:#7b8794;--s-kw:#1c3f6e;--s-bi:#2f5a94;--s-str:#2f7d5b;--s-num:#b45309;--s-fn:#6b3fa0;--s-dec:#6b3fa0;--s-op:#55657a}
+:root[data-theme="navy"]{--bg:#0e1620;--surface:#15212d;--ink:#e8edf2;--muted:#9aa8b5;--line:#243342;--accent:#6db3e0;--accent-ink:#0e1620;--soft:rgba(109,179,224,.12);--code:#101b27;--head:#1a2c3d;--shadow:rgba(0,0,0,.4);
+ --s-com:#6b7c8e;--s-kw:#6db3e0;--s-bi:#9fd0ee;--s-str:#8fd1a8;--s-num:#f0b27a;--s-fn:#c3a6f0;--s-dec:#c3a6f0;--s-op:#9aa8b5}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 .95rem/1.7 var(--sans);transition:background .4s,color .4s}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* sidebar */
+.side{position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20;transition:transform .3s}
+.side-top{padding:20px 18px 14px;border-bottom:1px solid var(--line)}
+.back{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 16px 0 6px;border-radius:999px;border:1px solid var(--line);text-decoration:none;color:var(--ink);font:500 .85rem var(--sans);transition:transform .2s,background .2s,box-shadow .2s}
+.back:hover{transform:translateX(-2px);box-shadow:0 8px 20px -12px var(--accent)}
+.back i{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-style:normal;font-size:1rem}
+.side-scroll{flex:1;overflow-y:auto;padding:16px 12px}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 10px 10px}
+.toc-list{list-style:none;padding:0}
+.toc-list li{margin:1px 0}
+.toc-list a{display:block;padding:5px 10px;border-radius:8px;text-decoration:none;color:var(--muted);font-size:.84rem;line-height:1.4;transition:background .2s,color .2s}
+.toc-list .toc-l3 a{padding-left:24px;font-size:.8rem}
+.toc-list a:hover{color:var(--ink);background:var(--soft)}
+.toc-list a.on{color:var(--accent);background:var(--soft);font-weight:500}
+.topbar{display:none}
+.scrim{display:none}
+
+/* content */
+.main{margin-left:var(--side)}
+.page{max-width:920px;margin:0 auto;padding:56px 40px 110px}
+h1,h2,h3{font-family:var(--serif);font-weight:400;scroll-margin-top:24px}
+h1{font-size:clamp(1.9rem,3.6vw,2.7rem);line-height:1.12;letter-spacing:-.02em;margin-bottom:16px}
+h2{font-size:1.55rem;line-height:1.2;margin:48px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+h3{font-size:1.2rem;font-weight:500;margin:30px 0 8px}
+h4{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:22px 0 6px;scroll-margin-top:24px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.4em}
+li{margin-bottom:5px}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:1px 6px;border-radius:5px}
+.md-cell{margin-bottom:4px}
+.md-cell>p:first-of-type{color:var(--muted)}
+
+.code-cell{margin:18px 0}
+.cell-row{display:flex;align-items:flex-start;gap:10px}
+.io-label{flex:0 0 auto;font:.78rem var(--mono);color:var(--accent);padding-top:13px;min-width:58px}
+.code-box{flex:1 1 auto;min-width:0;background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px 16px;overflow-x:auto}
+.codehilite{background:transparent!important;margin:0}
+.codehilite pre,.code-box pre{margin:0;font:.82rem/1.6 var(--mono);white-space:pre;color:var(--ink)}
+.cell-output{margin:10px 0 0 68px;min-width:0}
+.stream-output{font:.8rem/1.55 var(--mono);background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:0 0 10px;overflow-x:auto;white-space:pre;color:var(--ink);border-radius:0 10px 10px 0}
+.error-output{font:.8rem/1.55 var(--mono);background:rgba(224,85,79,.08);border-left:3px solid #e0554f;padding:10px 14px;margin:0 0 10px;overflow-x:auto;white-space:pre;color:var(--ink);border-radius:0 10px 10px 0}
+
+.output-image{text-align:center;margin:14px 0 18px}
+.output-image img,.md-cell img{display:block;width:100%;max-width:760px;height:auto;margin:18px auto;background:#fff;padding:6px;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -26px var(--shadow)}
+.output-image img{cursor:zoom-in;margin:0 auto}
+.md-cell p:has(>img){text-align:center}
+
+.dash-btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--accent-ink)!important;font-weight:500;font-size:.86rem;padding:0 20px;min-height:44px;border-radius:999px;text-decoration:none!important;margin:4px 0 16px;transition:transform .2s,box-shadow .2s}
+.dash-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px -12px var(--accent)}
+
+.table-scroll{overflow-x:auto;margin:10px 0 20px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table.nb-table{border-collapse:collapse;width:100%;font-size:.84rem;min-width:480px}
+table.nb-table th,table.nb-table td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.nb-table.dataframe-table th,table.nb-table.dataframe-table td{white-space:nowrap}
+table.nb-table thead th{font-weight:600;background:var(--head);border-bottom:1px solid var(--line)}
+table.nb-table tbody tr:last-child td,table.nb-table tbody tr:last-child th{border-bottom:none}
+table.nb-table th:first-child,table.nb-table td:first-child{text-align:center;color:var(--muted)}
+.codehilite .c,.codehilite .ch,.codehilite .cm,.codehilite .cpf,.codehilite .c1,.codehilite .cs{color:var(--s-com);font-style:italic}
+.codehilite .k,.codehilite .kc,.codehilite .kd,.codehilite .kn,.codehilite .kp,.codehilite .kr,.codehilite .ow{color:var(--s-kw);font-weight:600}
+.codehilite .nb,.codehilite .ne,.codehilite .bp{color:var(--s-bi)}
+.codehilite .s,.codehilite .sa,.codehilite .sb,.codehilite .sc,.codehilite .dl,.codehilite .sd,.codehilite .s2,.codehilite .se,.codehilite .sh,.codehilite .si,.codehilite .sx,.codehilite .sr,.codehilite .s1,.codehilite .ss{color:var(--s-str)}
+.codehilite .m,.codehilite .mb,.codehilite .mf,.codehilite .mh,.codehilite .mi,.codehilite .mo,.codehilite .il{color:var(--s-num)}
+.codehilite .nf,.codehilite .fm,.codehilite .nc,.codehilite .nn{color:var(--s-fn)}
+.codehilite .nd,.codehilite .nt,.codehilite .nl{color:var(--s-dec)}
+.codehilite .o{color:var(--s-op)}
+
+@media (max-width:900px){
+ .topbar{display:flex;position:fixed;top:0;left:0;right:0;height:56px;align-items:center;justify-content:space-between;padding:0 14px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:15}
+ .topbar button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--ink);font:500 .85rem var(--sans);cursor:pointer}
+ .side{transform:translateX(-100%)}
+ body.open .side{transform:none;box-shadow:0 0 60px rgba(0,0,0,.4)}
+ body.open .scrim{display:block;position:fixed;inset:0;background:rgba(5,10,16,.5);z-index:19}
+ .main{margin-left:0}
+ .page{padding:84px 20px 90px}
+ .cell-output{margin-left:0}
+ .cell-row{flex-direction:column;gap:4px}
+ .io-label{padding-top:0}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto}}
+
+.subtitle{color:var(--muted);font-size:1rem;margin:0 0 12px}
+.workflow{margin:0 0 8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:0 0 20px}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:0;padding-left:1.2em}
+.card li:last-child{margin-bottom:0}
+table.tools,table.sheets,table.hyp{width:100%;border-collapse:collapse;margin:0 0 12px;font-size:.9rem}
+table.tools td,table.hyp td{padding:10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.tools td:first-child{font-weight:600;width:120px;padding-right:12px}
+table.hyp td:first-child{font-weight:600;width:60px;padding-right:12px}
+table.hyp tr:last-child td{border-bottom:none}
+table.sheets th{text-align:left;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:0 12px 8px 0;border-bottom:1px solid var(--line)}
+table.sheets td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.sheets td:first-child{font-weight:600;white-space:nowrap}
+section{margin:0}
+figure{margin:0 auto 20px;text-align:center}
+figure img{display:block;width:100%;max-width:100%;margin:0 auto;background:#fff;padding:6px;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -26px var(--shadow)}
+figure.narrow img{max-width:480px}
+figure.small img{max-width:280px}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:8px}
+.insight,.recommendation{background:var(--soft);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;margin:0 0 28px}
+.insight p,.recommendation p{margin:0 0 10px}
+.insight p:last-child,.recommendation p:last-child{margin-bottom:0}
+.insight-label{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+hr{border:none;border-top:1px solid var(--line);margin:48px 0 0}
+.note{font-size:.84rem;color:var(--muted);margin-top:32px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 18px;overflow-x:auto;margin:0 0 20px;font:.82rem/1.6 var(--mono);color:var(--ink)}
+pre code{font:inherit;background:none;padding:0;border-radius:0}
+.comment{color:var(--s-com);font-style:italic}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 24px}
+.stat{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.stat .num{font:400 1.7rem var(--serif);color:var(--accent)}
+.stat .lbl{font-size:.8rem;color:var(--muted);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="/#work" aria-label="Back to portfolio"><i>&larr;</i><span>Portfolio</span></a><button id="menu" type="button">Contents</button></div>
+<div class="scrim"></div>
+<aside class="side" aria-label="Table of contents">
+  <div class="side-top"><a class="back" href="/#work" aria-label="Back to portfolio"><i>&larr;</i><span>Back to portfolio</span></a></div>
+  <nav class="side-scroll"><p class="eyebrow">Contents</p><ul class="toc-list"><li class="toc-l2"><a href="#scenario">Problem Scenario</a></li><li class="toc-l2"><a href="#questions">Business Questions</a></li><li class="toc-l2"><a href="#tools">Tools Used</a></li><li class="toc-l2"><a href="#data">Data Overview</a></li><li class="toc-l2"><a href="#analysis">Analysis</a></li><li class="toc-l3"><a href="#a1">Overall Call Performance</a></li><li class="toc-l3"><a href="#a2">Calls Reaching Each Agent</a></li><li class="toc-l3"><a href="#a3">Agent Performance (First Contact Resolution)</a></li><li class="toc-l3"><a href="#a4">Monthly Trend</a></li><li class="toc-l3"><a href="#a5">Call Volume and Abandonment by Hour and Weekday</a></li><li class="toc-l3"><a href="#a6">Most Popular Topics</a></li><li class="toc-l3"><a href="#a7">Transfer Rate by Topic</a></li><li class="toc-l3"><a href="#a8">Ticket SLA Compliance by Team and Quarter</a></li><li class="toc-l2"><a href="#dashboard">Dashboard</a></li><li class="toc-l2"><a href="#conclusion">Key Insights and Recommendations</a></li></ul></nav>
+</aside>
+<div class="main"><main class="page">
+
+
+  <h1>Customer Support Operations Dashboard &amp; Analysis</h1>
+  <p class="subtitle">This project uses Excel functions, PivotTables, and an interactive dashboard, to analyze a year of call center and ticketing data for a broadband provider's support desk, identifying staffing gaps, performance issues, and process breakdowns.</p>
+  <p class="workflow"><strong>Workflow:</strong> Raw Data &rarr; Pivot Analysis &rarr; Interactive Dashboard &rarr; Business Insights &amp; Recommendations</p>
+
+  
+
+  <section><h2 id="scenario">Problem Scenario</h2>
+    <p>NexaNet Broadband runs an inbound phone support desk, open daily from 6am to 10pm across two shifts. Six agents across two teams handle incoming calls, with senior Tier 2 agents taking the more complex technical issues. When a call can't be resolved on the spot, it becomes a follow-up ticket handled by a specialist department, such as field technicians, network operations, or billing.</p>
+    <p>Management wants to know where the support desk is falling short of its targets, and why, so resources can be prioritized going into the next planning period.</p>
+  </section>
+
+  <section><h2 id="questions">Business Questions</h2>
+    <div class="card">
+      <ul>
+        <li>Is call volume handled consistently throughout the year, or are there periods where the desk struggles to keep up?</li>
+        <li>Are staffing levels matched to when calls actually come in, by hour, day, and shift?</li>
+        <li>Which agents and teams are meeting their targets, and which aren't?</li>
+        <li>What are customers calling about most?</li>
+        <li>Are follow-up tickets being resolved within their service targets, and if not, which teams need support?</li>
+        <li>How satisfied are customers with the support they received?</li>
+      </ul>
+    </div>
+  </section>
+
+  <section><h2 id="tools">Tools Used</h2>
+    <table class="tools">
+      <tr><td>Excel</td><td>PivotTables, XLOOKUP, IF, COUNTIFS, conditional formatting, slicers, and PivotCharts</td></tr>
+      <tr><td>Dataset</td><td>Synthetic call center and ticketing dataset built to mirror a real broadband provider's support desk, 30,204 calls and 4,832 tickets across 2025</td></tr>
+    </table>
+  </section>
+
+  <section><h2 id="data">Data Overview</h2>
+    <p>The workbook is built as a relational set of tables.</p>
+    <table class="sheets">
+      <tr><th>Sheet</th><th>Rows</th><th>Contents</th></tr>
+      <tr><td>Calls</td><td>30,204</td><td>One row per inbound call: queue time, answer time, end time, hold/wrap time, resolution outcome, CSAT</td></tr>
+      <tr><td>Agents</td><td>6</td><td>Team, team lead, shift, tier, hire date, weekly rest days</td></tr>
+      <tr><td>Customers</td><td>6,747</td><td>Region, city, plan, monthly fee</td></tr>
+      <tr><td>Issues</td><td>13</td><td>Call topic, category, complexity, target talk time</td></tr>
+      <tr><td>Tickets</td><td>4,832</td><td>Follow-up cases with priority, assigned team, and status</td></tr>
+      <tr><td>Summary_2024</td><td>12</td><td>Monthly totals for the prior year, used for year-over-year comparison</td></tr>
+      <tr><td>SLA_Policy</td><td>4</td><td>Hours allowed to resolve a ticket of each priority</td></tr>
+      <tr><td>Targets</td><td>9</td><td>Management targets per KPI, and whether higher or lower is better</td></tr>
+    </table>
+  </section>
+
+  <section><h2 id="analysis">Analysis</h2>
+
+    <h3 id="a1">Overall Call Performance</h3>
+    <figure class="narrow">
+      <img src="callcenter/kpi_summary.png" alt="KPI summary pivot table showing total calls, disposition rate, average wait, average talk time, and average CSAT">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>Abandonment sits at 7.9%, above the 5% target, driven mainly by wait times during peak hours (see <a href="#a5">Call Volume and Abandonment by Hour and Weekday</a> below).</p>
+    </div>
+
+    <h3 id="a2">Calls Reaching Each Agent</h3>
+    <figure class="narrow">
+      <img src="callcenter/agent_disposition.png" alt="Pivot table showing answered and abandoned call counts per agent">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>Maria Santos and Kristine Mendoza both work the Morning shift, which covers the 9-11am rush and Monday's call surge, the two busiest conditions from the heat map which likely explains why more calls go unanswered at their desks</p>
+    </div>
+
+    <h3 id="a3">Agent Performance (First Contact Resolution)</h3>
+    <figure class="small">
+      <img src="callcenter/agent_performance.png" alt="Bar chart of first contact resolution rate by agent">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>The two Tier 2 agents, Jose Reyes and Patricia Ramos, have the highest resolution rates, which fits their senior role. Among Tier 1 agents, Ramon Villanueva and Kristine Mendoza fall below the 75% target and may need more coaching or support.</p>
+    </div>
+
+    <h3 id="a4">Monthly Trend</h3>
+    <figure class="narrow">
+      <img src="callcenter/monthly_trend.png" alt="Table of total calls and abandonment rate by month for 2025">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>Abandonment is highest from July to September, peaking in August at 10.1%. This lines up with typhoon season, when network issues likely drive more calls in at once than the team can handle.</p>
+    </div>
+
+    <h3 id="a5">Call Volume and Abandonment by Hour and Weekday</h3>
+    <figure>
+      <img src="callcenter/abandonment_heatmap.png" alt="Heat map of abandonment rate by hour of day and day of week">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>Monday 9-11am has both the most calls of the week and the highest abandonment on the heat map. Staffing stays the same most days, 2 agents per shift, and doesn't increase for Monday despite the higher call volume. The schedule doesn't flex with demand, which is likely the real cause of Monday's high abandonment.</p>
+    </div>
+
+    <h3 id="a6">Most Popular Topics</h3>
+    <figure>
+      <img src="callcenter/most_popular_topics.png" alt="Bar chart of the top 5 call topics by volume">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>No Internet Connection peaks in August, which could be due to typhoon season and a possible regional outage, weather-driven, not a system problem. Billing Inquiry stays flat all year, a good candidate for a self-service fix like a FAQ or online portal. Payment Not Posted doubles starting July and stays high, unlike the August spike, this doesn't recover, pointing to a lasting process or system issue rather than a one-time event.</p>
+    </div>
+
+    <h3 id="a7">Transfer Rate by Topic</h3>
+    <figure class="small">
+      <img src="callcenter/transfer_rate.png" alt="Bar chart of transfer rate by call topic">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>Payment Not Posted has the highest transfer rate at 18.9%, on top of its call volume more than doubling since July. Together, this suggests front-line agents can't resolve these calls alone and need to hand them off, likely because the underlying billing issue needs a specialist or a system fix, not just a conversation.</p>
+    </div>
+
+    <h3 id="a8">Ticket SLA Compliance by Team and Quarter</h3>
+    <figure class="narrow">
+      <img src="callcenter/sla_compliance.png" alt="Stacked column chart of ticket SLA compliance by team and quarter">
+    </figure>
+    <div class="insight">
+      <div class="insight-label">INSIGHT</div>
+      <p>All other teams stay strong all year, mostly above 90%. Field Operations is the only one dropping to 72-74% in Q3 and Q4. This matches the typhoon-season surge in network calls, Field Operations likely got overloaded and never caught back up.</p>
+    </div>
+  </section>
+
+  <section><h2 id="dashboard">Dashboard</h2>
+    <p>All of the above is brought together into one filterable dashboard, with KPI cards (each showing target vs. actual), an agent performance chart, a topics breakdown, the abandonment heat map, and ticket SLA compliance by team, all connected to a single Month slicer.</p>
+    <figure>
+      <img src="callcenter/dashboard.webp" alt="Full customer support operations dashboard">
+    </figure>
+  </section>
+
+  <hr>
+
+  <section><h2 id="conclusion">Key Insights and Recommendations</h2>
+
+    <h3 style="margin-top:0;">Key Insights</h3>
+    <div class="card">
+      <ul>
+        <li><strong>Field Operations is the biggest problem area.</strong> Against a 90% SLA compliance target, every other team stays close to or above it all year, but Field Operations drops from about 88% to 72-74% in Q3 and Q4, a gap wide enough to repeat or worsen next typhoon season if nothing changes.</li>
+        <li><strong>Monday mornings are understaffed relative to demand.</strong> Staffing stays flat at 2 agents per shift most days, but Monday 9-11am gets the most calls of the week, and abandonment peaks there at up to 20%.</li>
+        <li><strong>Payment Not Posted points to an unresolved system issue.</strong> Call volume for this topic doubled starting July and never dropped back down, and it also has the highest transfer rate of any topic (18.9%), agents can't resolve it on the call alone.</li>
+      </ul>
+    </div>
+
+    <h3>Recommendations</h3>
+    <div class="recommendation">
+      <p>Add temporary Field Operations capacity during typhoon season (July-September), so ticket backlog doesn't carry into Q4.</p>
+      <p>Shift one more agent to Monday morning, pulled from a lower-volume day or hour, to match staffing with actual demand.</p>
+      <p>Investigate the Payment Not Posted system issue directly, since it started suddenly in July and hasn't resolved on its own, this needs a technical fix, not just more agent training.</p>
+    </div>
+  </section>
+
+  <p class="note">Note: this dataset is synthetic, built to mirror realistic call center patterns for portfolio purposes, not real NexaNet Broadband data.</p>
+
+
+</main></div>
+<script>(function(){
+  var r=document.documentElement,body=document.body;
+  function setTheme(t){r.dataset.theme=t;try{localStorage.setItem("theme",t)}catch(e){}
+    document.querySelectorAll(".sw").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.t===t)})}
+  setTheme(r.dataset.theme);
+  document.querySelectorAll(".sw").forEach(function(b){b.onclick=function(){setTheme(b.dataset.t)}});
+  var tg=document.getElementById("menu");if(tg)tg.onclick=function(){body.classList.toggle("open")};
+  document.querySelector(".scrim").onclick=function(){body.classList.remove("open")};
+  var links={};document.querySelectorAll(".toc-list a").forEach(function(a){links[a.getAttribute("href").slice(1)]=a;a.addEventListener("click",function(){body.classList.remove("open")})});
+  var hs=[].slice.call(document.querySelectorAll("h2[id],h3[id]")).filter(function(h){return links[h.id]});
+  function spy(){var cur=hs[0];hs.forEach(function(h){if(h.getBoundingClientRect().top<140)cur=h});
+    Object.keys(links).forEach(function(k){links[k].classList.toggle("on",cur&&k===cur.id)});
+    var on=links[cur&&cur.id];if(on){var s=on.closest(".side-scroll"),o=on.offsetTop-s.clientHeight/2;if(Math.abs(s.scrollTop-o)>s.clientHeight/2-40)s.scrollTop=o}}
+  addEventListener("scroll",spy,{passive:true});spy();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+// card images live in public/cards/ (webp). doc = write-up page, link = external URL.
+export const PROJECTS = [
+  {
+    title: "E-Commerce Data Cleaning & Sales Analysis",
+    tags: ["Python", "Pandas", "Power BI"],
+    problem: "A messy Kaggle e-commerce dataset with inconsistent categories, invalid and negative values, duplicates, and gaps made sales figures unreliable.",
+    action: "Profiled and cleaned the data in Python and Pandas, validated totals and dates, then built a Power BI dashboard to analyze sales, returns, and payments.",
+    result: "Found sales concentrated in Blender, a high Fiction return rate (80%), a Q3 2023 to Q3 2024 sales gap, and a USD 10,000 price outlier, all flagged for verification.",
+    img: "/cards/ecommerce.webp",
+    doc: "/docs/ecommerce-analysis.html",
+  },
+  {
+    title: "Customer Support Operations Dashboard & Analysis",
+    tags: ["Excel", "PivotTables", "Dashboard"],
+    problem: "A broadband support desk was missing its targets, with 7.9% of calls abandoned against a 5% goal, and management couldn't see where or why.",
+    action: "Analyzed 30,204 calls and 4,832 tickets in Excel using PivotTables, XLOOKUP and COUNTIFS, then built an interactive dashboard with a Month slicer.",
+    result: "Found Monday mornings understaffed, Field Operations SLA falling to 72-74% in Q3 and Q4, and a lasting Payment Not Posted issue, with a recommendation for each.",
+    img: "/cards/callcenter.webp",
+    doc: "/docs/callcenter-analysis.html",
+  },
+  {
+    title: "NewsLens: Bilingual News Headline Classifier",
+    tags: ["Python", "BiLSTM", "SVM", "Flask"],
+    problem: "News headlines come in both Filipino and English, and most classifiers handle only one language, making bilingual headlines hard to sort by topic.",
+    action: "Trained a hybrid BiLSTM with attention and SVM model on 48,474 balanced headlines, then deployed it in a Flask web app.",
+    result: "Delivered NewsLens, a web app that classifies single headlines or RSS feeds into ten news categories.",
+    img: "/cards/newslens.webp",
+    link: "https://REPLACE-WITH-YOUR-NEWSLENS-APP-URL",
+  },
+  {
+    title: "Ad A/B Test: Interactive vs Standard Ad",
+    tags: ["SQL", "PostgreSQL", "Python", "Statistics"],
+    problem: "A company wanted to know whether an interactive ad would get more users to respond to its questionnaire than its standard ad.",
+    action: "Aggregated response counts by group in PostgreSQL, then ran a chi-square test of independence in Python at a 0.05 significance level.",
+    result: "The interactive ad's response rate was 16.40% vs 14.39% (p = 0.0136), a significant lift, so replacing the standard ad is recommended.",
+    img: "/cards/abtest.webp",
+    doc: "/docs/abtest-analysis.html",
+  },
+  {
+    title: "NYC Taxi Trips Analytics",
+    tags: ["BigQuery", "dbt", "Tableau"],
+    live: true,
+    problem: "Raw NYC taxi trip data is large and messy, so patterns in demand, trips, and fares are hard to see without a clean, queryable model.",
+    action: "Exploring the 2025 trip data in BigQuery, building dbt staging models, and preparing aggregate tables to power a Tableau dashboard.",
+    img: "/cards/tableau.webp",
+    link: "https://public.tableau.com/views/NYC_Taxi_2025/FleetAnalytics2025?:language=en-US&:sid=&:redirect=auth&:display_count=n&:origin=viz_share_link",
+  },
+];

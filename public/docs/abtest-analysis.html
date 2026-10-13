@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Does a Smarter Ad Get More Responses? An A/B Test Analysis</title>
+<script>(function(){var t;try{t=localStorage.getItem("theme")}catch(e){}document.documentElement.dataset.theme=t||(matchMedia("(prefers-color-scheme:dark)").matches?"navy":"light")})()</script>
+<style>
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;1,9..144,400&family=Inter:wght@400;500;600&display=swap");
+:root{--serif:'Fraunces',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;--side:292px}
+:root,:root[data-theme="light"]{--bg:#f5f1e6;--surface:#fbf8f0;--ink:#0f1e33;--muted:#55657a;--line:#ddd6c6;--accent:#1c3f6e;--accent-ink:#fff;--soft:rgba(28,63,110,.09);--code:#f1ecde;--head:#ece6d8;--shadow:rgba(20,30,50,.10);
+ --s-com:#7b8794;--s-kw:#1c3f6e;--s-bi:#2f5a94;--s-str:#2f7d5b;--s-num:#b45309;--s-fn:#6b3fa0;--s-dec:#6b3fa0;--s-op:#55657a}
+:root[data-theme="navy"]{--bg:#0e1620;--surface:#15212d;--ink:#e8edf2;--muted:#9aa8b5;--line:#243342;--accent:#6db3e0;--accent-ink:#0e1620;--soft:rgba(109,179,224,.12);--code:#101b27;--head:#1a2c3d;--shadow:rgba(0,0,0,.4);
+ --s-com:#6b7c8e;--s-kw:#6db3e0;--s-bi:#9fd0ee;--s-str:#8fd1a8;--s-num:#f0b27a;--s-fn:#c3a6f0;--s-dec:#c3a6f0;--s-op:#9aa8b5}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font:400 .95rem/1.7 var(--sans);transition:background .4s,color .4s}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+
+/* sidebar */
+.side{position:fixed;inset:0 auto 0 0;width:var(--side);background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20;transition:transform .3s}
+.side-top{padding:20px 18px 14px;border-bottom:1px solid var(--line)}
+.back{display:inline-flex;align-items:center;gap:10px;min-height:44px;padding:0 16px 0 6px;border-radius:999px;border:1px solid var(--line);text-decoration:none;color:var(--ink);font:500 .85rem var(--sans);transition:transform .2s,background .2s,box-shadow .2s}
+.back:hover{transform:translateX(-2px);box-shadow:0 8px 20px -12px var(--accent)}
+.back i{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-style:normal;font-size:1rem}
+.side-scroll{flex:1;overflow-y:auto;padding:16px 12px}
+.eyebrow{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:0 10px 10px}
+.toc-list{list-style:none;padding:0}
+.toc-list li{margin:1px 0}
+.toc-list a{display:block;padding:5px 10px;border-radius:8px;text-decoration:none;color:var(--muted);font-size:.84rem;line-height:1.4;transition:background .2s,color .2s}
+.toc-list .toc-l3 a{padding-left:24px;font-size:.8rem}
+.toc-list a:hover{color:var(--ink);background:var(--soft)}
+.toc-list a.on{color:var(--accent);background:var(--soft);font-weight:500}
+.topbar{display:none}
+.scrim{display:none}
+
+/* content */
+.main{margin-left:var(--side)}
+.page{max-width:920px;margin:0 auto;padding:56px 40px 110px}
+h1,h2,h3{font-family:var(--serif);font-weight:400;scroll-margin-top:24px}
+h1{font-size:clamp(1.9rem,3.6vw,2.7rem);line-height:1.12;letter-spacing:-.02em;margin-bottom:16px}
+h2{font-size:1.55rem;line-height:1.2;margin:48px 0 12px;padding-bottom:10px;border-bottom:1px solid var(--line)}
+h3{font-size:1.2rem;font-weight:500;margin:30px 0 8px}
+h4{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:500;margin:22px 0 6px;scroll-margin-top:24px}
+p{margin:0 0 12px}
+ul,ol{margin:0 0 12px;padding-left:1.4em}
+li{margin-bottom:5px}
+strong{font-weight:600}
+code{font-family:var(--mono);font-size:.86em;background:var(--code);padding:1px 6px;border-radius:5px}
+.md-cell{margin-bottom:4px}
+.md-cell>p:first-of-type{color:var(--muted)}
+
+.code-cell{margin:18px 0}
+.cell-row{display:flex;align-items:flex-start;gap:10px}
+.io-label{flex:0 0 auto;font:.78rem var(--mono);color:var(--accent);padding-top:13px;min-width:58px}
+.code-box{flex:1 1 auto;min-width:0;background:var(--code);border:1px solid var(--line);border-radius:12px;padding:12px 16px;overflow-x:auto}
+.codehilite{background:transparent!important;margin:0}
+.codehilite pre,.code-box pre{margin:0;font:.82rem/1.6 var(--mono);white-space:pre;color:var(--ink)}
+.cell-output{margin:10px 0 0 68px;min-width:0}
+.stream-output{font:.8rem/1.55 var(--mono);background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);padding:10px 14px;margin:0 0 10px;overflow-x:auto;white-space:pre;color:var(--ink);border-radius:0 10px 10px 0}
+.error-output{font:.8rem/1.55 var(--mono);background:rgba(224,85,79,.08);border-left:3px solid #e0554f;padding:10px 14px;margin:0 0 10px;overflow-x:auto;white-space:pre;color:var(--ink);border-radius:0 10px 10px 0}
+
+.output-image{text-align:center;margin:14px 0 18px}
+.output-image img,.md-cell img{display:block;width:100%;max-width:760px;height:auto;margin:18px auto;background:#fff;padding:6px;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -26px var(--shadow)}
+.output-image img{cursor:zoom-in;margin:0 auto}
+.md-cell p:has(>img){text-align:center}
+
+.dash-btn{display:inline-flex;align-items:center;gap:6px;background:var(--accent);color:var(--accent-ink)!important;font-weight:500;font-size:.86rem;padding:0 20px;min-height:44px;border-radius:999px;text-decoration:none!important;margin:4px 0 16px;transition:transform .2s,box-shadow .2s}
+.dash-btn:hover{transform:translateY(-2px);box-shadow:0 10px 22px -12px var(--accent)}
+
+.table-scroll{overflow-x:auto;margin:10px 0 20px;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table.nb-table{border-collapse:collapse;width:100%;font-size:.84rem;min-width:480px}
+table.nb-table th,table.nb-table td{padding:9px 14px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.nb-table.dataframe-table th,table.nb-table.dataframe-table td{white-space:nowrap}
+table.nb-table thead th{font-weight:600;background:var(--head);border-bottom:1px solid var(--line)}
+table.nb-table tbody tr:last-child td,table.nb-table tbody tr:last-child th{border-bottom:none}
+table.nb-table th:first-child,table.nb-table td:first-child{text-align:center;color:var(--muted)}
+.codehilite .c,.codehilite .ch,.codehilite .cm,.codehilite .cpf,.codehilite .c1,.codehilite .cs{color:var(--s-com);font-style:italic}
+.codehilite .k,.codehilite .kc,.codehilite .kd,.codehilite .kn,.codehilite .kp,.codehilite .kr,.codehilite .ow{color:var(--s-kw);font-weight:600}
+.codehilite .nb,.codehilite .ne,.codehilite .bp{color:var(--s-bi)}
+.codehilite .s,.codehilite .sa,.codehilite .sb,.codehilite .sc,.codehilite .dl,.codehilite .sd,.codehilite .s2,.codehilite .se,.codehilite .sh,.codehilite .si,.codehilite .sx,.codehilite .sr,.codehilite .s1,.codehilite .ss{color:var(--s-str)}
+.codehilite .m,.codehilite .mb,.codehilite .mf,.codehilite .mh,.codehilite .mi,.codehilite .mo,.codehilite .il{color:var(--s-num)}
+.codehilite .nf,.codehilite .fm,.codehilite .nc,.codehilite .nn{color:var(--s-fn)}
+.codehilite .nd,.codehilite .nt,.codehilite .nl{color:var(--s-dec)}
+.codehilite .o{color:var(--s-op)}
+
+@media (max-width:900px){
+ .topbar{display:flex;position:fixed;top:0;left:0;right:0;height:56px;align-items:center;justify-content:space-between;padding:0 14px;background:color-mix(in srgb,var(--bg) 85%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);z-index:15}
+ .topbar button{min-height:44px;padding:0 16px;border-radius:999px;border:1px solid var(--line);background:none;color:var(--ink);font:500 .85rem var(--sans);cursor:pointer}
+ .side{transform:translateX(-100%)}
+ body.open .side{transform:none;box-shadow:0 0 60px rgba(0,0,0,.4)}
+ body.open .scrim{display:block;position:fixed;inset:0;background:rgba(5,10,16,.5);z-index:19}
+ .main{margin-left:0}
+ .page{padding:84px 20px 90px}
+ .cell-output{margin-left:0}
+ .cell-row{flex-direction:column;gap:4px}
+ .io-label{padding-top:0}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto}}
+
+.subtitle{color:var(--muted);font-size:1rem;margin:0 0 12px}
+.workflow{margin:0 0 8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 24px;margin:0 0 20px}
+.card p:last-child{margin-bottom:0}
+.card ul{margin:0;padding-left:1.2em}
+.card li:last-child{margin-bottom:0}
+table.tools,table.sheets,table.hyp{width:100%;border-collapse:collapse;margin:0 0 12px;font-size:.9rem}
+table.tools td,table.hyp td{padding:10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.tools td:first-child{font-weight:600;width:120px;padding-right:12px}
+table.hyp td:first-child{font-weight:600;width:60px;padding-right:12px}
+table.hyp tr:last-child td{border-bottom:none}
+table.sheets th{text-align:left;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:0 12px 8px 0;border-bottom:1px solid var(--line)}
+table.sheets td{padding:10px 12px 10px 0;border-bottom:1px solid var(--line);vertical-align:top}
+table.sheets td:first-child{font-weight:600;white-space:nowrap}
+section{margin:0}
+figure{margin:0 auto 20px;text-align:center}
+figure img{display:block;width:100%;max-width:100%;margin:0 auto;background:#fff;padding:6px;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -26px var(--shadow)}
+figure.narrow img{max-width:480px}
+figure.small img{max-width:280px}
+figcaption{font-size:.8rem;color:var(--muted);margin-top:8px}
+.insight,.recommendation{background:var(--soft);border-left:3px solid var(--accent);border-radius:0 12px 12px 0;padding:16px 20px;margin:0 0 28px}
+.insight p,.recommendation p{margin:0 0 10px}
+.insight p:last-child,.recommendation p:last-child{margin-bottom:0}
+.insight-label{font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:6px}
+hr{border:none;border-top:1px solid var(--line);margin:48px 0 0}
+.note{font-size:.84rem;color:var(--muted);margin-top:32px}
+pre{background:var(--code);border:1px solid var(--line);border-radius:12px;padding:14px 18px;overflow-x:auto;margin:0 0 20px;font:.82rem/1.6 var(--mono);color:var(--ink)}
+pre code{font:inherit;background:none;padding:0;border-radius:0}
+.comment{color:var(--s-com);font-style:italic}
+.stat-row{display:flex;gap:14px;flex-wrap:wrap;margin:0 0 24px}
+.stat{flex:1;min-width:160px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 20px}
+.stat .num{font:400 1.7rem var(--serif);color:var(--accent)}
+.stat .lbl{font-size:.8rem;color:var(--muted);margin-top:2px}
+</style>
+</head>
+<body>
+<div class="topbar"><a class="back" href="/#work" aria-label="Back to portfolio"><i>&larr;</i><span>Portfolio</span></a><button id="menu" type="button">Contents</button></div>
+<div class="scrim"></div>
+<aside class="side" aria-label="Table of contents">
+  <div class="side-top"><a class="back" href="/#work" aria-label="Back to portfolio"><i>&larr;</i><span>Back to portfolio</span></a></div>
+  <nav class="side-scroll"><p class="eyebrow">Contents</p><ul class="toc-list"><li class="toc-l2"><a href="#scenario">Problem Scenario</a></li><li class="toc-l2"><a href="#hypothesis">Hypothesis</a></li><li class="toc-l2"><a href="#tools">Tools Used</a></li><li class="toc-l2"><a href="#sql">SQL: Preparing and Aggregating the Data</a></li><li class="toc-l3"><a href="#sql-1">Importing and Verifying the Data</a></li><li class="toc-l3"><a href="#sql-2">Data Quality Check</a></li><li class="toc-l3"><a href="#sql-3">Response Rate by Group</a></li><li class="toc-l2"><a href="#python">Python: Testing for Significance</a></li><li class="toc-l3"><a href="#python-1">Chi-Square Test</a></li><li class="toc-l3"><a href="#python-2">Visualizing the Comparison</a></li><li class="toc-l2"><a href="#conclusion">Insights and Business Recommendation</a></li></ul></nav>
+</aside>
+<div class="main"><main class="page">
+
+
+  <h1>Ad A/B Test Analysis</h1>
+  <p class="subtitle">This project uses SQL and Python to test whether an interactive ad drives a higher questionnaire response rate than a company's standard ad, based on real online advertising data.</p>
+  <p class="workflow"><strong>Workflow:</strong> Raw Data &rarr; SQL Aggregation &rarr; Hypothesis Test &rarr; Visualization &rarr; Business Recommendation</p>
+
+  
+
+  <section><h2 id="scenario">Problem Scenario</h2>
+    <p>A company shows its customers an ad meant to get them to fill out a BIO questionnaire. Most users currently see a plain, static version of this ad. The company has developed a more interactive version and wants to know whether switching to it is worth the investment.</p>
+    <p>Users shown either version can respond with "Yes," respond with "No," or ignore the questionnaire entirely. The metric that matters here is the response rate: the share of users who engage with the questionnaire at all, regardless of which answer they choose. A higher response rate means the ad is doing its job of capturing attention, even before considering what the answer itself was.</p>
+    <p>The dataset splits users into two groups: a control group shown the standard ad, and an exposed group shown the interactive version. The question this analysis wants to answer is: does the interactive ad actually get more people to respond, or does it just look better without changing behavior?</p>
+  </section>
+
+  <section><h2 id="hypothesis">Hypothesis</h2>
+    <div class="card">
+      <table class="hyp">
+        <tr>
+          <td>H&#8320;</td>
+          <td>There is no difference in response rate between the control group and the exposed group. Any observed gap is due to random variation.</td>
+        </tr>
+        <tr>
+          <td>H&#8321;</td>
+          <td>The exposed group has a different response rate than the control group. The interactive ad has a real effect on whether users respond.</td>
+        </tr>
+      </table>
+    </div>
+    <p>A chi-square test of independence is used to check whether the response outcome (responded vs. did not respond) is independent of the group a user was shown, at a 0.05 significance level.</p>
+  </section>
+
+  <section><h2 id="tools">Tools Used</h2>
+    <p><strong>PostgreSQL</strong> for loading the raw dataset, checking data quality, and aggregating response counts by group. <strong>Python (pandas, scipy, matplotlib)</strong> for running the statistical test and visualizing the result. <strong>Dataset:</strong> SmartAd Ad A/B Testing dataset (Kaggle).</p>
+  </section>
+
+  <section><h2 id="sql">SQL: Preparing and Aggregating the Data</h2>
+    <p>The raw dataset was loaded into a PostgreSQL table matching its original structure, then checked and summarized before any statistical testing began.</p>
+
+    <pre><code><span class="comment">-- table structure matching the raw dataset</span>
+CREATE TABLE ad_ab_testing (
+    auction_id TEXT,
+    experiment TEXT,
+    date DATE,
+    hour INTEGER,
+    device_make TEXT,
+    platform_os INTEGER,
+    browser TEXT,
+    yes INTEGER,
+    no INTEGER
+);
+
+<span class="comment">-- imported the CSV through pgAdmin's Import/Export tool
+-- (ad_ab_testing.csv, the SmartAd dataset from Kaggle)</span></code></pre>
+
+    <h3 id="sql-1">Importing and Verifying the Data</h3>
+    <pre><code><span class="comment">-- confirming the import: row count and a sample of the data</span>
+SELECT COUNT(*)
+FROM ad_ab_testing;
+
+SELECT *
+FROM ad_ab_testing
+LIMIT 10;</code></pre>
+    <figure style="max-width:25%"><img src="abtest/row_num.png" alt="Row count of the ad_ab_testing table"></figure>
+	<figure><img src="abtest/first_ten.png" alt="First ten rows of the ad_ab_testing table"></figure>
+    <h3 id="sql-2">Data Quality Check</h3>
+    <pre><code><span class="comment">-- basic data quality check: nulls and duplicate auction_ids</span>
+SELECT COUNT(*) FILTER (WHERE auction_id IS NULL) AS null_auction_id,
+       COUNT(*) FILTER (WHERE experiment IS NULL) AS null_experiment,
+       COUNT(*) FILTER (WHERE yes IS NULL) AS null_yes,
+       COUNT(*) FILTER (WHERE no IS NULL) AS null_no
+FROM ad_ab_testing;
+
+SELECT auction_id, COUNT(*)
+FROM ad_ab_testing
+GROUP BY auction_id
+HAVING COUNT(*) > 1;</code></pre>
+    <figure><img src="abtest/null.png" alt="Null and duplicate check results"></figure>
+
+    <h3 id="sql-3">Response Rate by Group</h3>
+    <pre><code><span class="comment">-- aggregating response counts by group to compare response rate (dummy ad vs smart ad)</span>
+SELECT experiment,
+       COUNT(*) AS total_users,
+       SUM(yes) + SUM(no) AS responded,
+       COUNT(*) - (SUM(yes) + SUM(no)) AS did_not_respond,
+       ROUND((SUM(yes) + SUM(no))::NUMERIC / COUNT(*) * 100, 2) AS response_rate
+FROM ad_ab_testing
+GROUP BY experiment;</code></pre>
+    <figure><img src="abtest/data_summary.png" alt="Response rate summary by group"></figure>
+  </section>
+
+  <section><h2 id="python">Python: Testing for Significance</h2>
+    <p>The response and non-response counts from the SQL aggregation were carried into Python to test whether the difference in response rate is statistically significant.</p>
+
+    <h3 id="python-1">Chi-Square Test</h3>
+    <pre><code><span class="comment"># comparing response rate between the smart ad and dummy ad groups using the counts pulled from SQL</span>
+
+from scipy.stats import chi2_contingency
+
+<span class="comment"># [responded, did_not_respond]</span>
+data = [
+    [586, 3485],    <span class="comment"># control</span>
+    [657, 3349],    <span class="comment"># exposed</span>
+]
+
+chi2, p_value, dof, expected = chi2_contingency(data)
+
+print("Chi-square statistic:", chi2)
+print("P-value:", p_value)</code></pre>
+    <div class="stat-row">
+      <div class="stat">
+        <div class="num">6.09</div>
+        <div class="lbl">Chi-square statistic</div>
+      </div>
+      <div class="stat">
+        <div class="num">0.0136</div>
+        <div class="lbl">P-value</div>
+      </div>
+    </div>
+
+    <h3 id="python-2">Visualizing the Comparison</h3>
+    <pre><code><span class="comment"># visualizing the response rate comparison between groups</span>
+
+import matplotlib.pyplot as plt
+
+groups = ['Control (Dummy Ad)', 'Exposed (Smart Ad)']
+response_rates = [14.39, 16.40]
+
+plt.bar(groups, response_rates, color=['gray', 'steelblue'])
+plt.ylabel('Response Rate (%)')
+plt.title('Response Rate: Dummy Ad vs Smart Ad (p = 0.0136)')
+plt.show()</code></pre>
+	<figure style="max-width:65%"><img src="abtest/chart.png" alt="Bar chart comparing response rate between the dummy ad and smart ad"></figure>
+  </section>
+
+  <hr>
+
+  <section><h2 id="conclusion">Insights and Business Recommendation</h2>
+    <p>The exposed group's response rate (16.40%) was about 2% higher than the control group's (14.39%). With a p-value of 0.0136, well below the 0.05 threshold, this gap is unlikely to be the result of random chance. The null hypothesis is rejected: the interactive ad has a real, measurable effect on whether users respond to the questionnaire.</p>
+    <div class="recommendation">
+      <p><strong>Recommendation:</strong> The company should replace the standard ad with the interactive one. The improvement in response rate is not only statistically significant but also meaningful in practice, since it is a metric the company can directly influence through ad design.</p>
+    </div>
+  </section>
+
+
+</main></div>
+<script>(function(){
+  var r=document.documentElement,body=document.body;
+  function setTheme(t){r.dataset.theme=t;try{localStorage.setItem("theme",t)}catch(e){}
+    document.querySelectorAll(".sw").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.t===t)})}
+  setTheme(r.dataset.theme);
+  document.querySelectorAll(".sw").forEach(function(b){b.onclick=function(){setTheme(b.dataset.t)}});
+  var tg=document.getElementById("menu");if(tg)tg.onclick=function(){body.classList.toggle("open")};
+  document.querySelector(".scrim").onclick=function(){body.classList.remove("open")};
+  var links={};document.querySelectorAll(".toc-list a").forEach(function(a){links[a.getAttribute("href").slice(1)]=a;a.addEventListener("click",function(){body.classList.remove("open")})});
+  var hs=[].slice.call(document.querySelectorAll("h2[id],h3[id]")).filter(function(h){return links[h.id]});
+  function spy(){var cur=hs[0];hs.forEach(function(h){if(h.getBoundingClientRect().top<140)cur=h});
+    Object.keys(links).forEach(function(k){links[k].classList.toggle("on",cur&&k===cur.id)});
+    var on=links[cur&&cur.id];if(on){var s=on.closest(".side-scroll"),o=on.offsetTop-s.clientHeight/2;if(Math.abs(s.scrollTop-o)>s.clientHeight/2-40)s.scrollTop=o}}
+  addEventListener("scroll",spy,{passive:true});spy();
+})();
+</script>
+</body>
+</html>
