@@ -21,7 +21,7 @@ const SKILLS = [
 
 
 
-const Tilt = TiltModule.default ?? TiltModule; // works whether Vite wraps the import or not
+const Tilt = TiltModule.default ?? TiltModule;
 const ease = [0.2, 0.8, 0.2, 1];
 
 // number that counts up when scrolled into view
@@ -37,7 +37,7 @@ const Count = ({ to }) => {
 };
 const glare = { glareEnable: true, glareMaxOpacity: 0.22, glareColor: "#9fb6d8", scale: 1.015 };
 
-// wipe-up reveal (not a fade)
+// wipe-up reveal
 const Reveal = ({ children, className }) => {
   const ref = useRef();
   const seen = useInView(ref, { once: true, amount: 0.2 });
@@ -263,7 +263,7 @@ export default function App() {
             <a className="btn" href="https://mail.google.com/mail/?view=cm&fs=1&to=alyssamae.sanpedro0@gmail.com&su=Hello%20Alyssa" target="_blank" rel="noopener noreferrer"><Mail size={16} />Email</a>
             <a className="btn" href="https://www.linkedin.com/in/alyssamae-sanpedro" target="_blank" rel="noopener noreferrer"><FaLinkedinIn size={15} />LinkedIn</a>
             <a className="btn" href="https://github.com/AlyssaMaeSanPedro" target="_blank" rel="noopener noreferrer"><FaGithub size={16} />GitHub</a>
-            <a className="btn" href="/AlyssaMae_SanPedro_Resume.pdf" target="_blank" rel="noopener noreferrer"><FileText size={16} />Resume</a>
+            <a className="btn" href="/AlyssaMaeSanPedro_Resume.pdf" target="_blank" rel="noopener noreferrer"><FileText size={16} />Resume</a>
           </div>
         </div>
         <p className="copy">© 2026 Alyssa Mae San Pedro</p>

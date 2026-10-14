@@ -13,7 +13,7 @@ export default function ProjectPreview({ src, alt }) {
         src={src}
         alt={alt}
         loading="lazy"
-        style={{ display: "block", width: "100%" }}
+        style={{ display: "block", width: "100%", aspectRatio: "16 / 9", objectFit: "cover", objectPosition: "top" }}
         initial={{ clipPath: "inset(0 100% 0 0)", scale: 1.05 }}
         animate={seen ? { clipPath: "inset(0 0% 0 0)", scale: 1 } : {}}
         transition={{ duration: 1, ease }}

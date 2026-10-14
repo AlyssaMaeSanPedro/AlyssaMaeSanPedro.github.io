@@ -20,7 +20,7 @@ export const CERTS = [
   { name: "Data Analysis Using Python", by: "Cognitive Class (IBM)", img: "/certs/data-analysis-using-python-badge.webp", url: "https://www.credly.com/badges/f499b05e-986b-42ea-80f9-3afca5de26c7/public_url" }
 ];
 
-// Shown in a collapsed list (not counted). Add a url if the certificate has a link.
+// Shown in a collapsed list
 export const SEMINARS = [
   "Life After Graduation: The Reality No One Talks About",
   "Building a Home without Windows: A Student’s Guide to Linux",
