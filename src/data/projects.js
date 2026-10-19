@@ -12,7 +12,7 @@ export const PROJECTS = [
     title: "Customer Support Operations Dashboard & Analysis",
     tags: ["Excel", "PivotTables", "Dashboard"],
     problem: "A broadband support desk was falling short of its service targets, and management needed to know where to prioritize resources.",
-    action: "Analyzed 30,204 calls and 4,832 tickets in Excel using PivotTables, XLOOKUP, and IFS, then built an interactive dashboard tracking KPIs against targets.",
+    action: "Analyzed 30,204 calls and 4,832 tickets in Excel using PivotTables, XLOOKUP, and IF, then built an interactive dashboard tracking KPIs against targets.",
     result: "Pinpointed Monday-morning understaffing, a Field Operations SLA drop to 72-74%, and a lasting Payment Not Posted issue, with a recommendation for each.",
     img: "/cards/callcenter.webp",
     doc: "/docs/callcenter-analysis.html",
